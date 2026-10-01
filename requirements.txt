@@ -1,0 +1,29 @@
+﻿# Merit System Personel Polri - Dependencies
+# Compatible with Python 3.11 - 3.13
+
+# Web framework
+fastapi>=0.109.0
+
+# ASGI server
+uvicorn[standard]>=0.27.0
+
+# Database
+sqlalchemy>=2.0.25
+psycopg2-binary>=2.9.9
+
+# Migrations
+alembic>=1.13.1
+
+# Authentication - JWT
+python-jose[cryptography]>=3.3.0
+
+# Password hashing - bcrypt langsung (tanpa passlib, kompatibel Python 3.13)
+bcrypt>=4.0.0
+
+# Environment / settings
+python-dotenv>=1.0.0
+python-multipart>=0.0.7
+
+# Validation (pydantic v2, compatible with Python 3.13)
+pydantic[email]>=2.5.3
+pydantic-settings>=2.1.0

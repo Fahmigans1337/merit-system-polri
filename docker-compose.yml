@@ -1,0 +1,55 @@
+﻿version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: merit_polri_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: merit_polri
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d merit_polri']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: merit_polri_api
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/merit_polri
+      SECRET_KEY: merit-system-polri-secret-key-2026-CHANGE-IN-PRODUCTION
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      DEBUG: 'False'
+    ports:
+      - '8000:8000'
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+
+  seed:
+    build: .
+    container_name: merit_polri_seed
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/merit_polri
+      SECRET_KEY: merit-system-polri-secret-key-2026-CHANGE-IN-PRODUCTION
+      ALGORITHM: HS256
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python -X utf8 seed.py
+    restart: on-failure
+
+volumes:
+  postgres_data:

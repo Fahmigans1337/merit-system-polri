@@ -1,0 +1,148 @@
+﻿{
+  "info": {
+    "_postman_id": "merit-system-polri-2026",
+    "name": "Merit System Personel Polri API",
+    "description": "REST API Collection untuk Merit System Personel Polri\n\n**Cara Penggunaan:**\n1. Jalankan request `[AUTH] Login Admin` atau `[AUTH] Login Operator`\n2. Token akan tersimpan otomatis ke variable `access_token`\n3. Semua request lain akan menggunakan token tersebut secara otomatis",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api/v1", "type": "string" },
+    { "key": "access_token", "value": "", "type": "string" },
+    { "key": "personel_id", "value": "", "type": "string" },
+    { "key": "rj_id", "value": "", "type": "string" },
+    { "key": "satker_id", "value": "", "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "[AUTH] Login Admin SSDM",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { var json = pm.response.json(); pm.collectionVariables.set('access_token', json.access_token); pm.collectionVariables.set('refresh_token', json.refresh_token); console.log('Token tersimpan!'); }"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin.ssdm\",\n  \"password\": \"Admin@12345\"\n}" }, "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] } }
+        },
+        {
+          "name": "[AUTH] Login Operator Metro",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { var json = pm.response.json(); pm.collectionVariables.set('access_token', json.access_token); }"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"username\": \"operator.metro\",\n  \"password\": \"Operator@123\"\n}" }, "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] } }
+        },
+        {
+          "name": "[AUTH] Refresh Token",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}" }, "url": { "raw": "{{base_url}}/auth/refresh", "host": ["{{base_url}}"], "path": ["auth","refresh"] } }
+        },
+        {
+          "name": "[AUTH] Get Me",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth","me"] } }
+        }
+      ]
+    },
+    {
+      "name": "🏢 Satuan Kerja",
+      "item": [
+        {
+          "name": "List Semua Satker",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/satker?skip=0&limit=10", "host": ["{{base_url}}"], "path": ["satker"], "query": [{"key":"skip","value":"0"},{"key":"limit","value":"10"}] } }
+        },
+        {
+          "name": "Tambah Satker (Admin)",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) { pm.collectionVariables.set('satker_id', pm.response.json().id); }"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"nama\": \"POLDA BALI\",\n  \"kode\": \"POLDABALI\",\n  \"deskripsi\": \"Kepolisian Daerah Bali\"\n}" }, "url": { "raw": "{{base_url}}/satker", "host": ["{{base_url}}"], "path": ["satker"] } }
+        },
+        {
+          "name": "Detail Satker",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/satker/{{satker_id}}", "host": ["{{base_url}}"], "path": ["satker","{{satker_id}}"] } }
+        },
+        {
+          "name": "Update Satker (Admin)",
+          "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"nama\": \"POLDA BALI UPDATED\",\n  \"deskripsi\": \"Kepolisian Daerah Bali (Updated)\"\n}" }, "url": { "raw": "{{base_url}}/satker/{{satker_id}}", "host": ["{{base_url}}"], "path": ["satker","{{satker_id}}"] } }
+        },
+        {
+          "name": "Hapus Satker (Admin)",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{base_url}}/satker/{{satker_id}}", "host": ["{{base_url}}"], "path": ["satker","{{satker_id}}"] } }
+        }
+      ]
+    },
+    {
+      "name": "👮 Personel",
+      "item": [
+        {
+          "name": "List Personel (dengan filter)",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/personel?skip=0&limit=10", "host": ["{{base_url}}"], "path": ["personel"], "query": [{"key":"skip","value":"0"},{"key":"limit","value":"10"},{"key":"nama","value":"","disabled":true},{"key":"nrp_nip","value":"","disabled":true},{"key":"pangkat","value":"","disabled":true}] } }
+        },
+        {
+          "name": "Tambah Personel Baru",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) { var d = pm.response.json().data; if(d) pm.collectionVariables.set('personel_id', d.id); }"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"nama\": \"KOMISARIS POLISI GHANI PRATAMA, S.I.K.\",\n  \"nrp_nip\": \"99010101\",\n  \"pangkat\": \"KOMPOL\",\n  \"tempat_lahir\": \"Jakarta\",\n  \"tanggal_lahir\": \"1990-05-15\",\n  \"satker_id\": \"<GANTI-DENGAN-SATKER-ID>\"\n}" }, "url": { "raw": "{{base_url}}/personel", "host": ["{{base_url}}"], "path": ["personel"] } }
+        },
+        {
+          "name": "Profil Lengkap Personel (+ Riwayat)",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/personel/{{personel_id}}", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}"] } }
+        },
+        {
+          "name": "Update Personel",
+          "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"pangkat\": \"AKBP\",\n  \"nama\": \"AJUN KOMISARIS BESAR POLISI GHANI PRATAMA, S.I.K.\"\n}" }, "url": { "raw": "{{base_url}}/personel/{{personel_id}}", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}"] } }
+        },
+        {
+          "name": "Hapus Personel",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{base_url}}/personel/{{personel_id}}", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}"] } }
+        }
+      ]
+    },
+    {
+      "name": "📋 Riwayat Jabatan",
+      "item": [
+        {
+          "name": "List Riwayat Jabatan (Kronologis)",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/personel/{{personel_id}}/riwayat-jabatan", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}","riwayat-jabatan"] } }
+        },
+        {
+          "name": "Tambah Riwayat Jabatan",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) { pm.collectionVariables.set('rj_id', pm.response.json().id); }"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"jabatan\": \"KASAT RESKRIM\",\n  \"satuan_kerja\": \"POLRES METRO JAKARTA BARAT\",\n  \"fungsi\": \"RESERSE KRIMINAL\",\n  \"tanggal_mulai\": \"2024-01-01\",\n  \"tanggal_berakhir\": null,\n  \"nivelering_jabatan\": \"ES-IV/A\",\n  \"status_jabatan\": \"AKTIF\",\n  \"keterangan\": \"Jabatan pertama di satker baru\"\n}" }, "url": { "raw": "{{base_url}}/personel/{{personel_id}}/riwayat-jabatan", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}","riwayat-jabatan"] } }
+        },
+        {
+          "name": "Detail Riwayat Jabatan",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/personel/{{personel_id}}/riwayat-jabatan/{{rj_id}}", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}","riwayat-jabatan","{{rj_id}}"] } }
+        },
+        {
+          "name": "Update Riwayat Jabatan",
+          "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"tanggal_berakhir\": \"2025-12-31\",\n  \"status_jabatan\": \"NON_AKTIF\",\n  \"keterangan\": \"Selesai masa jabatan\"\n}" }, "url": { "raw": "{{base_url}}/personel/{{personel_id}}/riwayat-jabatan/{{rj_id}}", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}","riwayat-jabatan","{{rj_id}}"] } }
+        },
+        {
+          "name": "Hapus Riwayat Jabatan",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{base_url}}/personel/{{personel_id}}/riwayat-jabatan/{{rj_id}}", "host": ["{{base_url}}"], "path": ["personel","{{personel_id}}","riwayat-jabatan","{{rj_id}}"] } }
+        }
+      ]
+    },
+    {
+      "name": "👥 User Management (Admin Only)",
+      "item": [
+        {
+          "name": "List Semua User",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/users?skip=0&limit=100", "host": ["{{base_url}}"], "path": ["users"] } }
+        },
+        {
+          "name": "Buat User Baru",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"username\": \"operator.bali\",\n  \"email\": \"operator@poldabali.polri.go.id\",\n  \"password\": \"Operator@123\",\n  \"role\": \"OPERATOR_SATKER\",\n  \"satker_id\": \"<GANTI-DENGAN-SATKER-ID>\",\n  \"is_active\": true\n}" }, "url": { "raw": "{{base_url}}/users", "host": ["{{base_url}}"], "path": ["users"] } }
+        }
+      ]
+    },
+    {
+      "name": "🏥 Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": { "method": "GET", "header": [], "url": { "raw": "http://localhost:8000/health", "host": ["http://localhost:8000"], "path": ["health"] } }
+        },
+        {
+          "name": "Root Info",
+          "request": { "method": "GET", "header": [], "url": { "raw": "http://localhost:8000/", "host": ["http://localhost:8000"], "path": [""] } }
+        }
+      ]
+    }
+  ]
+}
