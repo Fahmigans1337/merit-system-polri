@@ -324,3 +324,4 @@ File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
 
 > Proyek ini dibuat untuk keperluan **Seleksi Kemampuan Pemrograman** SSDM Polri.
 > Waktu Pelaksanaan: 1–7 Oktober 2026 | Durasi: 7 Hari | Metode: Take Home Test
+> By: Bripda Zul Fahmi Rizki 
