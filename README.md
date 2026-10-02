@@ -13,7 +13,7 @@
 
 ---
 
-## 📋 Deskripsi
+## Deskripsi
 
 Prototype aplikasi **Merit System Personel Polri** berbasis REST API untuk pengelolaan data kualifikasi dan riwayat jabatan personel Polri secara terintegrasi.
 
@@ -28,7 +28,7 @@ Fitur utama:
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 | Komponen | Teknologi |
 |---|---|
@@ -43,7 +43,7 @@ Fitur utama:
 
 ---
 
-## 🗂️ Struktur Proyek
+## Struktur Proyek
 
 ```
 merit-system-polri/
@@ -91,7 +91,7 @@ merit-system-polri/
 
 ---
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ### Metode 1: Script Otomatis `run.sh` (Linux/WSL) — Recommended
 
@@ -166,12 +166,12 @@ Setelah server berjalan:
 
 ---
 
-## 🔑 Cara Autentikasi di Swagger UI
+## Cara Autentikasi di Swagger UI
 
 1. Buka **http://localhost:8000/docs**
 2. Klik **`POST /api/v1/auth/login`** → **Try it out** → isi username & password → **Execute**
 3. Copy nilai `access_token` dari response
-4. Klik tombol **🔒 Authorize** (pojok kanan atas)
+4. Klik tombol **Authorize** (pojok kanan atas)
 5. Masukkan: `Bearer <access_token>`
 6. Klik **Authorize** → **Close**
 7. Semua endpoint kini bisa diakses dengan hak sesuai role
@@ -189,7 +189,7 @@ Setelah server berjalan:
 
 ---
 
-## 🔐 Role & Kewenangan (RBAC)
+## Role & Kewenangan (RBAC)
 
 | Fitur | ADMIN_SSDM | OPERATOR_SATKER |
 |---|---|---|
@@ -203,11 +203,11 @@ Setelah server berjalan:
 
 ---
 
-## 📡 Daftar API Endpoints
+## Daftar API Endpoints
 
 Base URL: `http://localhost:8000/api/v1`
 
-### 🔐 Authentication
+### Authentication
 
 | Method | Endpoint | Deskripsi | Auth |
 |---|---|---|---|
@@ -215,7 +215,7 @@ Base URL: `http://localhost:8000/api/v1`
 | POST | `/auth/refresh` | Perbarui access token dengan refresh token | ❌ |
 | GET | `/auth/me` | Info profil user yang sedang login | ✅ |
 
-### 👥 User Management *(Admin SSDM Only)*
+### User Management *(Admin SSDM Only)*
 
 | Method | Endpoint | Deskripsi |
 |---|---|---|
@@ -225,7 +225,7 @@ Base URL: `http://localhost:8000/api/v1`
 | PUT | `/users/{id}` | Update data pengguna |
 | DELETE | `/users/{id}` | Hapus pengguna |
 
-### 🏢 Satuan Kerja
+### Satuan Kerja
 
 | Method | Endpoint | Deskripsi | Role |
 |---|---|---|---|
@@ -235,7 +235,7 @@ Base URL: `http://localhost:8000/api/v1`
 | PUT | `/satker/{id}` | Update satker | Admin |
 | DELETE | `/satker/{id}` | Hapus satker | Admin |
 
-### 👮 Personel
+### Personel
 
 | Method | Endpoint | Deskripsi | Query Params |
 |---|---|---|---|
@@ -245,7 +245,7 @@ Base URL: `http://localhost:8000/api/v1`
 | PUT | `/personel/{id}` | Update data personel | — |
 | DELETE | `/personel/{id}` | Hapus personel + seluruh riwayat (cascade) | — |
 
-### 📋 Riwayat Jabatan
+### Riwayat Jabatan
 
 | Method | Endpoint | Deskripsi |
 |---|---|---|
@@ -257,7 +257,7 @@ Base URL: `http://localhost:8000/api/v1`
 
 ---
 
-## ✅ Validasi Input
+## Validasi Input
 
 | Field | Aturan |
 |---|---|
@@ -276,7 +276,7 @@ Base URL: `http://localhost:8000/api/v1`
 
 ---
 
-## 🗄️ Skema Database
+## Skema Database
 
 ```
 satker
@@ -298,7 +298,7 @@ riwayat_jabatan
 
 ---
 
-## 📮 Postman Collection
+## Postman Collection
 
 File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
 
@@ -310,7 +310,7 @@ File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
 
 ---
 
-## 🔒 Keamanan
+## Keamanan
 
 - Password di-hash dengan **bcrypt** (cost factor 12)
 - JWT ditandatangani dengan **HS256**
@@ -320,7 +320,7 @@ File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
 
 ---
 
-## 📞 Informasi
+## Informasi
 
 > Proyek ini dibuat untuk keperluan **Seleksi Kemampuan Pemrograman** SSDM Polri.
 > Waktu Pelaksanaan: 1–7 Oktober 2026 | Durasi: 7 Hari | Metode: Take Home Test
