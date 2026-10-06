@@ -1,4 +1,4 @@
-﻿from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.models.riwayat_jabatan import RiwayatJabatan, StatusJabatan
 from app.schemas.riwayat_jabatan import RiwayatJabatanCreate, RiwayatJabatanUpdate

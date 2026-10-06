@@ -1,4 +1,4 @@
-﻿import uuid
+import uuid
 import enum
 from datetime import datetime
 from sqlalchemy import Column, String, Boolean, DateTime, Enum, ForeignKey

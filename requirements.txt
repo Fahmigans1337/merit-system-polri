@@ -1,4 +1,4 @@
-﻿# Merit System Personel Polri - Dependencies
+# Merit System Personel Polri - Dependencies
 # Compatible with Python 3.11 - 3.13
 
 # Web framework

@@ -1,0 +1,26 @@
+"""Urutan baku untuk tampilan: satuan kerja (Mabes lalu Polda Aceh -> Papua) dan pangkat (tertinggi -> terendah)."""
+
+# Kode satker diurutkan: Mabes dulu, kemudian Polda dari Aceh sampai Papua.
+KODE_ORDER = [
+    'SSDM', 'BARESKRIM', 'BAINTELKAM', 'BAHARKAM', 'KORLANTAS', 'KORBRIMOB', 'DENSUS88',
+    'LEMDIKLAT', 'DIVPROPAM', 'DIVTIK', 'ITWASUM',
+    'POLDAACEH', 'POLDASUMUT', 'POLDASUMBAR', 'POLDARIAU', 'POLDAKEPRI', 'POLDAJAMBI',
+    'POLDABENGKULU', 'POLDASUMSEL', 'POLDABABEL', 'POLDALAMPUNG',
+    'POLDAMETRO', 'POLDABANTEN', 'POLDAJABAR', 'POLDAJATENG', 'POLDADIY', 'POLDAJATIM', 'POLDABALI',
+    'POLDAKALBAR', 'POLDAKALTENG', 'POLDAKALSEL', 'POLDAKALTIM', 'POLDAKALTARA',
+    'POLDANTB', 'POLDANTT', 'POLDASULUT', 'POLDAGORONTALO', 'POLDASULTENG', 'POLDASULTRA',
+    'POLDASULSEL', 'POLDASULBAR',
+    'POLDAMALUKU', 'POLDAMALUT', 'POLDAPAPUA', 'POLDAPAPBAR', 'POLDAPAPTENG',
+]
+
+# Pangkat dari tertinggi ke terendah.
+PANGKAT_ORDER = [
+    'JENDERAL POL', 'KOMJEN POL', 'IRJEN POL', 'BRIGJEN POL',
+    'KOMBES POL', 'AKBP', 'KOMPOL',
+    'AKP', 'IPTU', 'IPDA',
+    'AIPTU', 'AIPDA', 'BRIPKA', 'BRIGADIR', 'BRIPTU', 'BRIPDA',
+    'ABRIP', 'ABRIPTU', 'ABRIPDA', 'BHARAKA', 'BHARATU', 'BHARADA',
+]
+
+KODE_RANK = {k: i for i, k in enumerate(KODE_ORDER)}
+PANGKAT_RANK = {p: i for i, p in enumerate(PANGKAT_ORDER)}

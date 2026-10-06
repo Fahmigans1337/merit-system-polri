@@ -1,7 +1,17 @@
+from sqlalchemy import case
 from sqlalchemy.orm import Session, joinedload
 from typing import Optional, List
 from app.models.personel import Personel
 from app.schemas.personel import PersonelCreate, PersonelUpdate
+from app.core.urutan import PANGKAT_RANK
+
+
+def _filter_pangkat(q, pangkat: str):
+    '''Pangkat baku (mis. IPTU) dicocokkan persis agar tidak ikut menjaring AIPTU; selain itu partial match.'''
+    p = pangkat.strip().upper()
+    if p in PANGKAT_RANK:
+        return q.filter(Personel.pangkat == p)
+    return q.filter(Personel.pangkat.ilike(f'%{pangkat}%'))
 
 
 def get_personel(db: Session, personel_id: str) -> Optional[Personel]:
@@ -32,10 +42,11 @@ def get_personels(
     if nrp_nip:
         q = q.filter(Personel.nrp_nip.ilike(f'%{nrp_nip}%'))
     if pangkat:
-        q = q.filter(Personel.pangkat.ilike(f'%{pangkat}%'))
+        q = _filter_pangkat(q, pangkat)
     if satker_id:
         q = q.filter(Personel.satker_id == satker_id)
-    return q.order_by(Personel.nama).offset(skip).limit(limit).all()
+    urutan = case(PANGKAT_RANK, value=Personel.pangkat, else_=9999)
+    return q.order_by(urutan, Personel.nama).offset(skip).limit(limit).all()
 
 
 def count_personels(
@@ -51,7 +62,7 @@ def count_personels(
     if nrp_nip:
         q = q.filter(Personel.nrp_nip.ilike(f'%{nrp_nip}%'))
     if pangkat:
-        q = q.filter(Personel.pangkat.ilike(f'%{pangkat}%'))
+        q = _filter_pangkat(q, pangkat)
     if satker_id:
         q = q.filter(Personel.satker_id == satker_id)
     return q.count()

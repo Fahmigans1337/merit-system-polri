@@ -25,16 +25,17 @@ Sistem pengelolaan data kualifikasi dan riwayat jabatan personel Polri.
 
 ### Cara Autentikasi
 1. Login via POST /api/v1/auth/login
-2. Copy ccess_token dari response
+2. Copy access_token dari response
 3. Klik **Authorize**, masukkan: Bearer <token>
 
 ### Akun Demo
 | Username | Password | Role |
 |---|---|---|
-| dmin.ssdm | Admin@12345 | ADMIN_SSDM |
+| admin.ssdm | Admin@12345 | ADMIN_SSDM |
 | operator.metro | Operator@123 | OPERATOR_SATKER |
 | operator.jabar | Operator@123 | OPERATOR_SATKER |
 | operator.jatim | Operator@123 | OPERATOR_SATKER |
+| operator.sulsel | Operator@123 | OPERATOR_SATKER |
     ''',
     version=settings.APP_VERSION,
     docs_url='/docs',

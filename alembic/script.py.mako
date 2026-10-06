@@ -1,4 +1,4 @@
-﻿"""
+"""
 
 Revision ID: 
 Revises: 

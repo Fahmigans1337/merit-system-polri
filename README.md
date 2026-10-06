@@ -1,440 +1,205 @@
-<<<<<<< HEAD
-﻿# Merit System Personel Polri
-=======
-# Merit System Personel Polri
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
-## REST API Prototype — Take Home Test Seleksi Kemampuan Pemrograman
+# Merit SDM - Personel Polri
 
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16-4169E1?style=flat-square&logo=postgresql&logoColor=white)
-![Python](https://img.shields.io/badge/Python_3.11--3.12-3776AB?style=flat-square&logo=python&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?style=flat-square&logo=docker&logoColor=white)
-![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=flat-square&logo=jsonwebtokens)
-![License](https://img.shields.io/badge/Internal_Use-Polri_SSDM-blue?style=flat-square)
+REST API dan Web UI untuk pengelolaan **kualifikasi dan riwayat jabatan personel Polri** (prototype sistem merit).
 
-> **Seleksi Kemampuan Pemrograman** — CRUD Sistem Merit Personel Polri: Kualifikasi dan Riwayat Jabatan
-> Waktu Pelaksanaan: 1–7 Oktober 2026 | Durasi: 7 Hari | Metode: Take Home Test
+- **Backend:** FastAPI + SQLAlchemy + PostgreSQL
+- **Autentikasi:** JWT (access token 1 hari, refresh token 7 hari)
+- **Otorisasi:** RBAC dengan 2 role (Admin SSDM dan Operator Satker)
+- **Web UI:** login + dashboard Admin/Operator, dilayani langsung oleh FastAPI (tanpa build tambahan)
+- **Dokumentasi API:** Swagger UI dan ReDoc
 
----
+## Fitur
 
-<<<<<<< HEAD
-## 📋 Deskripsi
-=======
-## Deskripsi
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
+- CRUD personel: nama, NRP/NIP, pangkat, tempat dan tanggal lahir, satuan kerja
+- CRUD riwayat jabatan: jabatan, satuan kerja, fungsi, TMT, nivelering, status, keterangan
+- Profil personel: identitas, jabatan aktif saat ini, dan riwayat jabatan kronologis (terlama ke terbaru)
+- Pencarian dan filter personel (nama, NRP/NIP, pangkat, satuan kerja) dengan pagination
+- 22 pangkat Polri (Pati, Pamen, Pama, Bintara, Tamtama), diurutkan dari tertinggi ke terendah
+- 46 satuan kerja: 11 satker Mabes, lalu 34 Polda urut dari Aceh sampai Papua Tengah
+- Dashboard statistik yang mengikuti role
+- Validasi input dan pesan error yang jelas
 
-Prototype aplikasi **Merit System Personel Polri** berbasis REST API untuk pengelolaan data kualifikasi dan riwayat jabatan personel Polri secara terintegrasi.
+## Cara Menjalankan
 
-Fitur utama:
-- **CRUD Personel** — kelola data kualifikasi personel lengkap
-- **CRUD Riwayat Jabatan** — histori jabatan kronologis per personel
-- **Validasi Input** — Pydantic v2 dengan aturan ketat (format tanggal, NRP unik, dll)
-- **JWT Authentication** — access token (24 jam) + refresh token (7 hari)
-- **RBAC** — Role-Based Access Control (Admin SSDM vs Operator Satker)
-- **Swagger UI** — dokumentasi API interaktif otomatis di `/docs`
-- **PostgreSQL** — database produksi yang handal
+### Opsi 1: Linux / WSL Ubuntu (paling cepat)
 
----
+```bash
+git clone https://github.com/Fahmigans1337/merit-system-polri.git
+cd merit-system-polri
+python3 -m venv venv && source venv/bin/activate
+bash run.sh
+```
 
-<<<<<<< HEAD
-## 🏗️ Tech Stack
-=======
-## Tech Stack
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
+`run.sh` mengerjakan semuanya otomatis: install dan start PostgreSQL, buat database, install dependency, isi data awal (seed), lalu menjalankan server.
 
-| Komponen | Teknologi |
+Setelah muncul `Application startup complete`, buka **http://localhost:8000/**.
+
+### Opsi 2: Docker
+
+```bash
+docker compose up --build -d db api
+docker compose run --rm seed
+```
+
+Buka **http://localhost:8000/**.
+
+### Opsi 3: Manual dengan SQLite (tanpa PostgreSQL)
+
+```bash
+python -m venv venv
+source venv/bin/activate            # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+export DATABASE_URL=sqlite:///./merit_polri.db   # Windows PowerShell: $env:DATABASE_URL="sqlite:///./merit_polri.db"
+export SECRET_KEY=ganti-dengan-kunci-rahasia
+python -X utf8 seed.py
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+## Alamat Penting
+
+| URL | Keterangan |
 |---|---|
-| Framework | FastAPI (Python) |
-| Database | PostgreSQL 16 |
-| ORM | SQLAlchemy 2.x |
-| Validasi | Pydantic v2 |
-| Auth | JWT (python-jose + bcrypt) |
-| Dokumentasi | Swagger UI / OpenAPI 3.0 |
-| Migrasi | Alembic |
-| Deployment | Docker + Docker Compose |
+| http://localhost:8000/ | Web UI (login + dashboard) |
+| http://localhost:8000/docs | Swagger UI |
+| http://localhost:8000/redoc | ReDoc |
+| http://localhost:8000/openapi.json | Spesifikasi OpenAPI |
+| http://localhost:8000/health | Health check |
 
----
+## Akun Demo
+
+| Username | Password | Role | Satuan Kerja |
+|---|---|---|---|
+| `admin.ssdm` | `Admin@12345` | ADMIN_SSDM | SSDM POLRI |
+| `operator.metro` | `Operator@123` | OPERATOR_SATKER | POLDA METRO JAYA |
+| `operator.jabar` | `Operator@123` | OPERATOR_SATKER | POLDA JAWA BARAT |
+| `operator.jatim` | `Operator@123` | OPERATOR_SATKER | POLDA JAWA TIMUR |
+| `operator.sulsel` | `Operator@123` | OPERATOR_SATKER | POLDA SULAWESI SELATAN |
+
+> Akun ini hanya untuk demo. Ganti password dan `SECRET_KEY` sebelum dipakai di luar lingkungan uji.
+
+## Web UI
+
+| Halaman | Isi |
+|---|---|
+| Login | Form NRP/Username dan password, "Ingat Saya", akun demo sekali klik |
+| Beranda | Modul sesuai role, pengumuman |
+| SIPP Personel | Filter pencarian, kartu statistik, daftar personel, tambah/edit/hapus |
+| Detail Personel | Data pribadi, jabatan (CRUD), perjalanan karier |
+| MDM Satker | Daftar satuan kerja (Admin dapat mengubah) |
+| User Management | Khusus Admin |
+| Role Management | Penjelasan hak akses tiap role |
+
+## Hak Akses (RBAC)
+
+| Fitur | Admin SSDM | Operator Satker |
+|---|---|---|
+| Lihat dan kelola personel | Semua satker | Hanya satker sendiri |
+| Kelola riwayat jabatan | Semua satker | Hanya satker sendiri |
+| Lihat daftar satker | Ya | Ya |
+| Tambah/ubah/hapus satker | Ya | Tidak (403) |
+| Manajemen pengguna | Ya | Tidak (403) |
+| Statistik dashboard | Seluruh satker | Satker sendiri |
+
+## Endpoint REST API
+
+Base URL: `/api/v1`. Semua endpoint (kecuali login, refresh, dan health) memerlukan header `Authorization: Bearer <access_token>`.
+
+| Method | Endpoint | Keterangan |
+|---|---|---|
+| POST | `/auth/login` | Login, mengembalikan access dan refresh token |
+| POST | `/auth/refresh` | Minta access token baru |
+| GET | `/auth/me` | Data pengguna yang sedang login |
+| GET | `/dashboard/stats` | Statistik sesuai role |
+| GET, POST | `/users` | Daftar dan tambah pengguna (Admin) |
+| GET, PUT, DELETE | `/users/{user_id}` | Detail, ubah, hapus pengguna (Admin) |
+| GET, POST | `/satker` | Daftar satker, tambah satker (Admin) |
+| GET, PUT, DELETE | `/satker/{satker_id}` | Detail satker, ubah dan hapus (Admin) |
+| GET, POST | `/personel` | Daftar (filter + pagination) dan tambah personel |
+| GET, PUT, DELETE | `/personel/{personel_id}` | Profil lengkap, ubah, hapus personel |
+| GET, POST | `/personel/{personel_id}/riwayat-jabatan` | Daftar dan tambah riwayat jabatan |
+| GET, PUT, DELETE | `/personel/{personel_id}/riwayat-jabatan/{rj_id}` | Detail, ubah, hapus riwayat jabatan |
+
+Filter `GET /personel`: `skip`, `limit` (maks 100), `nama`, `nrp_nip`, `pangkat`, `satker_id` (khusus Admin).
+
+### Cara memakai di Swagger
+
+1. Buka `POST /api/v1/auth/login`, isi username dan password, lalu Execute.
+2. Copy nilai `access_token` (bukan `refresh_token`).
+3. Klik **Authorize**, isi `Bearer <access_token>`, lalu Authorize.
+4. Field `satker_id` dan `personel_id` selalu berupa **UUID**. Ambil dari `GET /satker` atau `GET /personel`, bukan kode atau nama.
+
+## Aturan Validasi
+
+- Field wajib tidak boleh kosong
+- `nrp_nip` unik, hanya huruf, angka, spasi, dan tanda hubung
+- `tanggal_lahir` harus sebelum hari ini
+- `tanggal_berakhir` tidak boleh sebelum `tanggal_mulai`
+- Password minimal 8 karakter
+- Username minimal 3 karakter (huruf, angka, titik, strip, underscore)
+- Kode satker unik
 
 ## Struktur Proyek
 
 ```
 merit-system-polri/
 ├── app/
-│   ├── main.py                    # Entry point FastAPI
-│   ├── config.py                  # Konfigurasi environment
-│   ├── database.py                # SQLAlchemy engine & session
-│   ├── models/                    # ORM Models (SQLAlchemy)
-│   │   ├── user.py                # Model User + enum UserRole
-│   │   ├── satker.py              # Model Satuan Kerja
-│   │   ├── personel.py            # Model Personel
-│   │   └── riwayat_jabatan.py     # Model Riwayat Jabatan + enum Status
-│   ├── schemas/                   # Pydantic Schemas (validasi request/response)
-│   │   ├── auth.py
-│   │   ├── user.py
-│   │   ├── satker.py
-│   │   ├── personel.py
-│   │   └── riwayat_jabatan.py
-│   ├── crud/                      # Logika database CRUD
-│   │   ├── user.py
-│   │   ├── satker.py
-│   │   ├── personel.py
-│   │   └── riwayat_jabatan.py
-│   ├── routers/                   # API Route Handlers
-│   │   ├── auth.py                # Login, refresh, me
-│   │   ├── users.py               # Manajemen user (Admin only)
-│   │   ├── satker.py              # CRUD Satuan Kerja
-│   │   ├── personel.py            # CRUD Personel + profil lengkap
-│   │   └── riwayat_jabatan.py     # CRUD Riwayat Jabatan
-│   └── core/
-│       ├── security.py            # JWT & bcrypt password hashing
-│       └── dependencies.py        # FastAPI auth dependencies
-├── alembic/                       # Database migrations
-│   ├── env.py
-│   └── versions/
-├── seed.py                        # Script data awal (dummy data)
-├── run.sh                         # Auto-setup script (PostgreSQL + seed + server)
-├── requirements.txt
-├── Dockerfile
+│   ├── main.py            # entrypoint FastAPI, CORS, mount Web UI
+│   ├── config.py          # pengaturan dari environment
+│   ├── database.py        # koneksi SQLAlchemy
+│   ├── core/              # security (JWT, bcrypt), dependencies RBAC, urutan satker/pangkat
+│   ├── models/            # tabel database
+│   ├── schemas/           # validasi request/response (Pydantic)
+│   ├── crud/              # akses data
+│   ├── routers/           # endpoint API
+│   └── static/            # Web UI (index.html, css, js, img)
+├── alembic/               # migrasi database
+├── seed.py                # data awal
+├── run.sh                 # auto setup + jalankan (Linux/WSL)
 ├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
 ├── .env.example
-├── Merit_System_Polri.postman_collection.json
-└── README.md
+└── Merit_System_Polri.postman_collection.json
 ```
-
----
-
-## Cara Menjalankan
-
-### Metode 1: Script Otomatis `run.sh` (Linux/WSL) — Recommended
-
-Satu perintah untuk install PostgreSQL, buat database, seed data, dan jalankan server:
-
-```bash
-git clone https://github.com/Fahmigans1337/merit-system-polri.git
-cd merit-system-polri
-chmod +x run.sh
-bash run.sh
-```
-
-Script ini otomatis:
-1. Install PostgreSQL jika belum ada
-2. Start PostgreSQL service
-3. Buat database `merit_polri` dan user
-4. Install Python dependencies
-5. Seed data awal (tanpa perlu konfigurasi manual)
-6. Jalankan server di port 8000
-
-### Metode 2: Docker Compose
-
-```bash
-git clone https://github.com/Fahmigans1337/merit-system-polri.git
-cd merit-system-polri
-docker compose up --build
-```
-
-### Metode 3: Manual (tanpa Docker)
-
-```bash
-# Clone repo
-git clone https://github.com/Fahmigans1337/merit-system-polri.git
-cd merit-system-polri
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Konfigurasi environment
-cp .env.example .env
-# Edit .env sesuaikan DATABASE_URL
-
-# Isi data awal
-python seed.py
-
-# Jalankan server
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### Metode 4: SQLite (local dev, tanpa PostgreSQL)
-
-```bash
-export DATABASE_URL="sqlite:///./merit_polri.db"
-export SECRET_KEY="merit-system-polri-secret-2026"
-export ALGORITHM="HS256"
-python seed.py
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
----
-
-## 🌐 Akses Aplikasi
-
-Setelah server berjalan:
-
-| URL | Keterangan |
-|---|---|
-| http://localhost:8000/ atau http://localhost:8000/app/ | **Web UI** (login + dashboard Admin/Operator) |
-| http://localhost:8000/docs | **Swagger UI** (dokumentasi interaktif) |
-| http://localhost:8000/redoc | ReDoc (dokumentasi read-only) |
-| http://localhost:8000/openapi.json | OpenAPI 3.0 JSON Spec |
-| http://localhost:8000/health | Health check endpoint |
-
----
-
-<<<<<<< HEAD
-## 🔑 Cara Autentikasi di Swagger UI
-=======
-## Cara Autentikasi di Swagger UI
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
-
-1. Buka **http://localhost:8000/docs**
-2. Klik **`POST /api/v1/auth/login`** → **Try it out** → isi username & password → **Execute**
-3. Copy nilai `access_token` dari response
-<<<<<<< HEAD
-4. Klik tombol **🔒 Authorize** (pojok kanan atas)
-=======
-4. Klik tombol **Authorize** (pojok kanan atas)
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
-5. Masukkan: `Bearer <access_token>`
-6. Klik **Authorize** → **Close**
-7. Semua endpoint kini bisa diakses dengan hak sesuai role
-
----
-
-## 👥 Akun Demo (setelah seed.py dijalankan)
-
-| Username | Password | Role | Satker |
-|---|---|---|---|
-| `admin.ssdm` | `Admin@12345` | ADMIN_SSDM | SSDM Polri |
-| `operator.metro` | `Operator@123` | OPERATOR_SATKER | Polda Metro Jaya |
-| `operator.jabar` | `Operator@123` | OPERATOR_SATKER | Polda Jawa Barat |
-| `operator.jatim` | `Operator@123` | OPERATOR_SATKER | Polda Jawa Timur |
-
----
-
-<<<<<<< HEAD
-## 🔐 Role & Kewenangan (RBAC)
-=======
-## Role & Kewenangan (RBAC)
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
-
-| Fitur | ADMIN_SSDM | OPERATOR_SATKER |
-|---|---|---|
-| Lihat semua personel (semua satker) | ✅ | ❌ |
-| Lihat personel satker sendiri | ✅ | ✅ |
-| Tambah/edit/hapus personel satker sendiri | ✅ | ✅ |
-| Kelola riwayat jabatan satker sendiri | ✅ | ✅ |
-| Manajemen user (CRUD) | ✅ | ❌ |
-| CRUD Satuan Kerja | ✅ | ❌ (read only) |
-| Filter personel per satker | ✅ | ❌ (otomatis) |
-<<<<<<< HEAD
-
----
-
-## 📡 Daftar API Endpoints
-
-Base URL: `http://localhost:8000/api/v1`
-
-### 🔐 Authentication
-
-| Method | Endpoint | Deskripsi | Auth |
-|---|---|---|---|
-| POST | `/auth/login` | Login, dapat access & refresh token | ❌ |
-| POST | `/auth/refresh` | Perbarui access token dengan refresh token | ❌ |
-| GET | `/auth/me` | Info profil user yang sedang login | ✅ |
-
-### 👥 User Management *(Admin SSDM Only)*
-
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| GET | `/users` | List semua pengguna sistem |
-| POST | `/users` | Buat akun pengguna baru |
-| GET | `/users/{id}` | Detail pengguna |
-| PUT | `/users/{id}` | Update data pengguna |
-| DELETE | `/users/{id}` | Hapus pengguna |
-
-### 🏢 Satuan Kerja
-
-| Method | Endpoint | Deskripsi | Role |
-|---|---|---|---|
-| GET | `/satker` | List semua satker | Semua |
-| POST | `/satker` | Tambah satker baru | Admin |
-| GET | `/satker/{id}` | Detail satker | Semua |
-| PUT | `/satker/{id}` | Update satker | Admin |
-| DELETE | `/satker/{id}` | Hapus satker | Admin |
-
-### 👮 Personel
-
-| Method | Endpoint | Deskripsi | Query Params |
-|---|---|---|---|
-| GET | `/personel` | List personel dengan filter & pagination | `nama`, `nrp_nip`, `pangkat`, `satker_id`, `skip`, `limit` |
-| POST | `/personel` | Tambah personel baru | — |
-| GET | `/personel/{id}` | Profil lengkap + riwayat jabatan kronologis | — |
-| PUT | `/personel/{id}` | Update data personel | — |
-| DELETE | `/personel/{id}` | Hapus personel + seluruh riwayat (cascade) | — |
-
-### 📋 Riwayat Jabatan
-
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| GET | `/personel/{id}/riwayat-jabatan` | List riwayat jabatan (terlama → terbaru) |
-| POST | `/personel/{id}/riwayat-jabatan` | Tambah riwayat jabatan baru |
-| GET | `/personel/{id}/riwayat-jabatan/{rj_id}` | Detail satu riwayat jabatan |
-| PUT | `/personel/{id}/riwayat-jabatan/{rj_id}` | Update riwayat jabatan |
-| DELETE | `/personel/{id}/riwayat-jabatan/{rj_id}` | Hapus riwayat jabatan |
-
----
-
-## ✅ Validasi Input
-
-| Field | Aturan |
-|---|---|
-| `tanggal_lahir` | Format DATE (YYYY-MM-DD), harus sebelum hari ini |
-| `tanggal_mulai` | Format DATE, wajib diisi |
-| `tanggal_berakhir` | Opsional; jika diisi harus ≥ `tanggal_mulai` |
-| `nrp_nip` | Wajib unik di seluruh sistem |
-| `email` | Format email valid, unik per sistem |
-| `password` | Minimal 8 karakter |
-| `username` | Minimal 3 karakter, alfanumerik + `.`, `-`, `_` |
-| `nama` | Tidak boleh kosong atau hanya spasi |
-| Field wajib kosong | Response `422 Unprocessable Entity` |
-| Data duplikat | Response `400 Bad Request` |
-| Akses tidak berwenang | Response `403 Forbidden` |
-| Data tidak ditemukan | Response `404 Not Found` |
-=======
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
-
----
-
-## Daftar API Endpoints
-
-Base URL: `http://localhost:8000/api/v1`
-
-### Authentication
-
-| Method | Endpoint | Deskripsi | Auth |
-|---|---|---|---|
-| POST | `/auth/login` | Login, dapat access & refresh token | ❌ |
-| POST | `/auth/refresh` | Perbarui access token dengan refresh token | ❌ |
-| GET | `/auth/me` | Info profil user yang sedang login | ✅ |
-
-### User Management *(Admin SSDM Only)*
-
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| GET | `/users` | List semua pengguna sistem |
-| POST | `/users` | Buat akun pengguna baru |
-| GET | `/users/{id}` | Detail pengguna |
-| PUT | `/users/{id}` | Update data pengguna |
-| DELETE | `/users/{id}` | Hapus pengguna |
-
-### Satuan Kerja
-
-| Method | Endpoint | Deskripsi | Role |
-|---|---|---|---|
-| GET | `/satker` | List semua satker | Semua |
-| POST | `/satker` | Tambah satker baru | Admin |
-| GET | `/satker/{id}` | Detail satker | Semua |
-| PUT | `/satker/{id}` | Update satker | Admin |
-| DELETE | `/satker/{id}` | Hapus satker | Admin |
-
-### Personel
-
-| Method | Endpoint | Deskripsi | Query Params |
-|---|---|---|---|
-| GET | `/personel` | List personel dengan filter & pagination | `nama`, `nrp_nip`, `pangkat`, `satker_id`, `skip`, `limit` |
-| POST | `/personel` | Tambah personel baru | — |
-| GET | `/personel/{id}` | Profil lengkap + riwayat jabatan kronologis | — |
-| PUT | `/personel/{id}` | Update data personel | — |
-| DELETE | `/personel/{id}` | Hapus personel + seluruh riwayat (cascade) | — |
-
-### Riwayat Jabatan
-
-| Method | Endpoint | Deskripsi |
-|---|---|---|
-| GET | `/personel/{id}/riwayat-jabatan` | List riwayat jabatan (terlama → terbaru) |
-| POST | `/personel/{id}/riwayat-jabatan` | Tambah riwayat jabatan baru |
-| GET | `/personel/{id}/riwayat-jabatan/{rj_id}` | Detail satu riwayat jabatan |
-| PUT | `/personel/{id}/riwayat-jabatan/{rj_id}` | Update riwayat jabatan |
-| DELETE | `/personel/{id}/riwayat-jabatan/{rj_id}` | Hapus riwayat jabatan |
-
----
-
-## Validasi Input
-
-| Field | Aturan |
-|---|---|
-| `tanggal_lahir` | Format DATE (YYYY-MM-DD), harus sebelum hari ini |
-| `tanggal_mulai` | Format DATE, wajib diisi |
-| `tanggal_berakhir` | Opsional; jika diisi harus ≥ `tanggal_mulai` |
-| `nrp_nip` | Wajib unik di seluruh sistem |
-| `email` | Format email valid, unik per sistem |
-| `password` | Minimal 8 karakter |
-| `username` | Minimal 3 karakter, alfanumerik + `.`, `-`, `_` |
-| `nama` | Tidak boleh kosong atau hanya spasi |
-| Field wajib kosong | Response `422 Unprocessable Entity` |
-| Data duplikat | Response `400 Bad Request` |
-| Akses tidak berwenang | Response `403 Forbidden` |
-| Data tidak ditemukan | Response `404 Not Found` |
-
----
 
 ## Skema Database
 
 ```
-satker
-  id (UUID) | nama | kode (UNIQUE) | deskripsi | created_at | updated_at
-
-users
-  id (UUID) | username (UNIQUE) | email (UNIQUE) | password_hash |
-  role (ADMIN_SSDM/OPERATOR_SATKER) | satker_id (FK) | is_active
-
-personel
-  id (UUID) | nama | nrp_nip (UNIQUE) | pangkat | tempat_lahir |
-  tanggal_lahir | satker_id (FK) | created_at | updated_at
-
-riwayat_jabatan
-  id (UUID) | personel_id (FK, CASCADE) | jabatan | satuan_kerja | fungsi |
-  tanggal_mulai | tanggal_berakhir | nivelering_jabatan |
-  status_jabatan (AKTIF/NON_AKTIF) | keterangan | created_at | updated_at
+satker           id, nama, kode (unik), deskripsi
+users            id, username (unik), email (unik), password_hash, role, satker_id, is_active
+personel         id, nama, nrp_nip (unik), pangkat, tempat_lahir, tanggal_lahir, satker_id
+riwayat_jabatan  id, personel_id (cascade), jabatan, satuan_kerja, fungsi, tanggal_mulai,
+                 tanggal_berakhir, nivelering_jabatan, status_jabatan, keterangan
 ```
 
----
+Seluruh `id` disimpan sebagai string UUID (`String(36)`) agar kompatibel dengan PostgreSQL dan SQLite.
 
-<<<<<<< HEAD
-## 📮 Postman Collection
-=======
-## Postman Collection
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
+## Environment Variable
 
-File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
+Salin `.env.example` menjadi `.env`, lalu sesuaikan.
 
-**Cara import:**
-1. Buka Postman
-2. **Import** → pilih file `Merit_System_Polri.postman_collection.json`
-3. Jalankan request `[AUTH] Login Admin SSDM` → token otomatis tersimpan
-4. Semua endpoint siap ditest
+| Variabel | Keterangan |
+|---|---|
+| `DATABASE_URL` | `postgresql+psycopg2://user:pass@host:5432/merit_polri` atau `sqlite:///./merit_polri.db` |
+| `SECRET_KEY` | Kunci penandatangan JWT (wajib diganti) |
+| `ALGORITHM` | `HS256` |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Default 1440 (1 hari) |
+| `REFRESH_TOKEN_EXPIRE_DAYS` | Default 7 |
 
----
+URL database PostgreSQL harus memakai awalan `postgresql+psycopg2://`.
 
-<<<<<<< HEAD
-## 🔒 Keamanan
-=======
-## Keamanan
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
+## Pemecahan Masalah
 
-- Password di-hash dengan **bcrypt** (cost factor 12)
-- JWT ditandatangani dengan **HS256**
-- Setiap endpoint diproteksi autentikasi JWT
-- RBAC memastikan isolasi data antar satker
-- `SECRET_KEY` wajib diganti di environment production
+| Masalah | Solusi |
+|---|---|
+| `Error: No such option '--reload\r'` | `run.sh` terubah menjadi CRLF. Jalankan `sed -i 's/\r$//' run.sh` lalu ulangi |
+| `Database sudah memiliki data. Skip seeding.` | Normal. Untuk mengisi ulang: `sudo -u postgres psql -c "DROP DATABASE merit_polri;"` lalu `bash run.sh` |
+| Data satker lama (hanya 4) masih tampil | Database lama belum direset. Drop database lalu jalankan `bash run.sh` |
+| `postgresql: unrecognized service` | Jalankan `sudo service postgresql start` di WSL |
+| `Address already in use` (port 8000) | Hentikan proses lama dengan Ctrl+C, atau ubah port pada perintah uvicorn |
+| Login `Username atau password salah` | Pastikan tidak ada spasi di akhir username |
+| UI tidak berubah setelah update | Tekan Ctrl+F5 untuk memuat ulang cache browser |
 
----
+## Postman
 
-<<<<<<< HEAD
-## 📞 Informasi
-=======
-## Informasi
->>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
-
-> Proyek ini dibuat untuk keperluan **Seleksi Kemampuan Pemrograman** SSDM Polri.
-> Waktu Pelaksanaan: 1–7 Oktober 2026 | Durasi: 7 Hari | Metode: Take Home Test
-> By: Bripda Zul Fahmi Rizki 
+Impor `Merit_System_Polri.postman_collection.json` ke Postman. Jalankan request Login lebih dulu, token tersimpan otomatis untuk request berikutnya.

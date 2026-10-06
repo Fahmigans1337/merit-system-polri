@@ -1,7 +1,9 @@
-﻿from sqlalchemy.orm import Session
+from sqlalchemy import case
+from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.models.satker import Satker
 from app.schemas.satker import SatkerCreate, SatkerUpdate
+from app.core.urutan import KODE_RANK
 
 
 def get_satker(db: Session, satker_id: str) -> Optional[Satker]:
@@ -13,7 +15,8 @@ def get_satker_by_kode(db: Session, kode: str) -> Optional[Satker]:
 
 
 def get_satkers(db: Session, skip: int = 0, limit: int = 100) -> List[Satker]:
-    return db.query(Satker).order_by(Satker.nama).offset(skip).limit(limit).all()
+    urutan = case(KODE_RANK, value=Satker.kode, else_=9999)
+    return db.query(Satker).order_by(urutan, Satker.nama).offset(skip).limit(limit).all()
 
 
 def count_satkers(db: Session) -> int:
