@@ -1,4 +1,4 @@
-﻿from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload
 from typing import Optional, List
 from app.models.personel import Personel
 from app.schemas.personel import PersonelCreate, PersonelUpdate
@@ -58,7 +58,9 @@ def count_personels(
 
 
 def create_personel(db: Session, personel: PersonelCreate) -> Personel:
-    db_p = Personel(**personel.model_dump())
+    data = personel.model_dump()
+    data['satker_id'] = str(data['satker_id'])
+    db_p = Personel(**data)
     db.add(db_p)
     db.commit()
     db.refresh(db_p)
@@ -67,6 +69,8 @@ def create_personel(db: Session, personel: PersonelCreate) -> Personel:
 
 def update_personel(db: Session, personel: Personel, data: PersonelUpdate) -> Personel:
     update_dict = data.model_dump(exclude_unset=True)
+    if update_dict.get('satker_id') is not None:
+        update_dict['satker_id'] = str(update_dict['satker_id'])
     for field, value in update_dict.items():
         setattr(personel, field, value)
     db.commit()

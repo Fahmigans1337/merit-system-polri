@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿# Merit System Personel Polri
+=======
+# Merit System Personel Polri
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 ## REST API Prototype — Take Home Test Seleksi Kemampuan Pemrograman
 
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
@@ -13,7 +17,11 @@
 
 ---
 
+<<<<<<< HEAD
 ## 📋 Deskripsi
+=======
+## Deskripsi
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 Prototype aplikasi **Merit System Personel Polri** berbasis REST API untuk pengelolaan data kualifikasi dan riwayat jabatan personel Polri secara terintegrasi.
 
@@ -28,7 +36,11 @@ Fitur utama:
 
 ---
 
+<<<<<<< HEAD
 ## 🏗️ Tech Stack
+=======
+## Tech Stack
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 | Komponen | Teknologi |
 |---|---|
@@ -43,7 +55,7 @@ Fitur utama:
 
 ---
 
-## 🗂️ Struktur Proyek
+## Struktur Proyek
 
 ```
 merit-system-polri/
@@ -91,7 +103,7 @@ merit-system-polri/
 
 ---
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ### Metode 1: Script Otomatis `run.sh` (Linux/WSL) — Recommended
 
@@ -159,6 +171,7 @@ Setelah server berjalan:
 
 | URL | Keterangan |
 |---|---|
+| http://localhost:8000/ atau http://localhost:8000/app/ | **Web UI** (login + dashboard Admin/Operator) |
 | http://localhost:8000/docs | **Swagger UI** (dokumentasi interaktif) |
 | http://localhost:8000/redoc | ReDoc (dokumentasi read-only) |
 | http://localhost:8000/openapi.json | OpenAPI 3.0 JSON Spec |
@@ -166,12 +179,20 @@ Setelah server berjalan:
 
 ---
 
+<<<<<<< HEAD
 ## 🔑 Cara Autentikasi di Swagger UI
+=======
+## Cara Autentikasi di Swagger UI
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 1. Buka **http://localhost:8000/docs**
 2. Klik **`POST /api/v1/auth/login`** → **Try it out** → isi username & password → **Execute**
 3. Copy nilai `access_token` dari response
+<<<<<<< HEAD
 4. Klik tombol **🔒 Authorize** (pojok kanan atas)
+=======
+4. Klik tombol **Authorize** (pojok kanan atas)
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 5. Masukkan: `Bearer <access_token>`
 6. Klik **Authorize** → **Close**
 7. Semua endpoint kini bisa diakses dengan hak sesuai role
@@ -189,7 +210,11 @@ Setelah server berjalan:
 
 ---
 
+<<<<<<< HEAD
 ## 🔐 Role & Kewenangan (RBAC)
+=======
+## Role & Kewenangan (RBAC)
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 | Fitur | ADMIN_SSDM | OPERATOR_SATKER |
 |---|---|---|
@@ -200,6 +225,7 @@ Setelah server berjalan:
 | Manajemen user (CRUD) | ✅ | ❌ |
 | CRUD Satuan Kerja | ✅ | ❌ (read only) |
 | Filter personel per satker | ✅ | ❌ (otomatis) |
+<<<<<<< HEAD
 
 ---
 
@@ -273,10 +299,85 @@ Base URL: `http://localhost:8000/api/v1`
 | Data duplikat | Response `400 Bad Request` |
 | Akses tidak berwenang | Response `403 Forbidden` |
 | Data tidak ditemukan | Response `404 Not Found` |
+=======
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 ---
 
-## 🗄️ Skema Database
+## Daftar API Endpoints
+
+Base URL: `http://localhost:8000/api/v1`
+
+### Authentication
+
+| Method | Endpoint | Deskripsi | Auth |
+|---|---|---|---|
+| POST | `/auth/login` | Login, dapat access & refresh token | ❌ |
+| POST | `/auth/refresh` | Perbarui access token dengan refresh token | ❌ |
+| GET | `/auth/me` | Info profil user yang sedang login | ✅ |
+
+### User Management *(Admin SSDM Only)*
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| GET | `/users` | List semua pengguna sistem |
+| POST | `/users` | Buat akun pengguna baru |
+| GET | `/users/{id}` | Detail pengguna |
+| PUT | `/users/{id}` | Update data pengguna |
+| DELETE | `/users/{id}` | Hapus pengguna |
+
+### Satuan Kerja
+
+| Method | Endpoint | Deskripsi | Role |
+|---|---|---|---|
+| GET | `/satker` | List semua satker | Semua |
+| POST | `/satker` | Tambah satker baru | Admin |
+| GET | `/satker/{id}` | Detail satker | Semua |
+| PUT | `/satker/{id}` | Update satker | Admin |
+| DELETE | `/satker/{id}` | Hapus satker | Admin |
+
+### Personel
+
+| Method | Endpoint | Deskripsi | Query Params |
+|---|---|---|---|
+| GET | `/personel` | List personel dengan filter & pagination | `nama`, `nrp_nip`, `pangkat`, `satker_id`, `skip`, `limit` |
+| POST | `/personel` | Tambah personel baru | — |
+| GET | `/personel/{id}` | Profil lengkap + riwayat jabatan kronologis | — |
+| PUT | `/personel/{id}` | Update data personel | — |
+| DELETE | `/personel/{id}` | Hapus personel + seluruh riwayat (cascade) | — |
+
+### Riwayat Jabatan
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| GET | `/personel/{id}/riwayat-jabatan` | List riwayat jabatan (terlama → terbaru) |
+| POST | `/personel/{id}/riwayat-jabatan` | Tambah riwayat jabatan baru |
+| GET | `/personel/{id}/riwayat-jabatan/{rj_id}` | Detail satu riwayat jabatan |
+| PUT | `/personel/{id}/riwayat-jabatan/{rj_id}` | Update riwayat jabatan |
+| DELETE | `/personel/{id}/riwayat-jabatan/{rj_id}` | Hapus riwayat jabatan |
+
+---
+
+## Validasi Input
+
+| Field | Aturan |
+|---|---|
+| `tanggal_lahir` | Format DATE (YYYY-MM-DD), harus sebelum hari ini |
+| `tanggal_mulai` | Format DATE, wajib diisi |
+| `tanggal_berakhir` | Opsional; jika diisi harus ≥ `tanggal_mulai` |
+| `nrp_nip` | Wajib unik di seluruh sistem |
+| `email` | Format email valid, unik per sistem |
+| `password` | Minimal 8 karakter |
+| `username` | Minimal 3 karakter, alfanumerik + `.`, `-`, `_` |
+| `nama` | Tidak boleh kosong atau hanya spasi |
+| Field wajib kosong | Response `422 Unprocessable Entity` |
+| Data duplikat | Response `400 Bad Request` |
+| Akses tidak berwenang | Response `403 Forbidden` |
+| Data tidak ditemukan | Response `404 Not Found` |
+
+---
+
+## Skema Database
 
 ```
 satker
@@ -298,7 +399,11 @@ riwayat_jabatan
 
 ---
 
+<<<<<<< HEAD
 ## 📮 Postman Collection
+=======
+## Postman Collection
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
 
@@ -310,7 +415,11 @@ File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
 
 ---
 
+<<<<<<< HEAD
 ## 🔒 Keamanan
+=======
+## Keamanan
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 - Password di-hash dengan **bcrypt** (cost factor 12)
 - JWT ditandatangani dengan **HS256**
@@ -320,7 +429,12 @@ File `Merit_System_Polri.postman_collection.json` tersedia di root repository.
 
 ---
 
+<<<<<<< HEAD
 ## 📞 Informasi
+=======
+## Informasi
+>>>>>>> 126ed430cebf8fa206b0b3ecabef37d10ab978e8
 
 > Proyek ini dibuat untuk keperluan **Seleksi Kemampuan Pemrograman** SSDM Polri.
 > Waktu Pelaksanaan: 1–7 Oktober 2026 | Durasi: 7 Hari | Metode: Take Home Test
+> By: Bripda Zul Fahmi Rizki 

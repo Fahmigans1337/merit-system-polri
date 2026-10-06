@@ -1,4 +1,4 @@
-﻿from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
@@ -27,7 +27,7 @@ def create_user(db: Session, user: UserCreate) -> User:
         email=user.email,
         password_hash=hash_password(user.password),
         role=user.role,
-        satker_id=user.satker_id,
+        satker_id=str(user.satker_id) if user.satker_id else None,
         is_active=user.is_active,
     )
     db.add(db_user)
@@ -42,6 +42,8 @@ def update_user(db: Session, user: User, data: UserUpdate) -> User:
         update_dict['password_hash'] = hash_password(update_dict.pop('password'))
     else:
         update_dict.pop('password', None)
+    if update_dict.get('satker_id') is not None:
+        update_dict['satker_id'] = str(update_dict['satker_id'])
     for field, value in update_dict.items():
         setattr(user, field, value)
     db.commit()
