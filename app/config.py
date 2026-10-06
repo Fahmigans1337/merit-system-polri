@@ -3,9 +3,14 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Database
-    # Production (Docker): postgresql+psycopg2://postgres:postgres@db:5432/merit_polri
-    # Local dev (SQLite) : sqlite:///./merit_polri.db
-    DATABASE_URL: str = "postgresql+psycopg2://postgres:postgres@db:5432/merit_polri"
+    # Default (tanpa konfigurasi apa pun) : SQLite file lokal -> langsung jalan
+    # Docker / PostgreSQL                 : postgresql+psycopg2://user:pass@host:5432/merit_polri
+    DATABASE_URL: str = "sqlite:///./merit_polri.db"
+
+    # Auto setup saat aplikasi start: tunggu database siap -> buat tabel -> isi data awal (jika masih kosong)
+    AUTO_SETUP: bool = True
+    DB_CONNECT_RETRIES: int = 30
+    DB_CONNECT_DELAY: float = 2.0
 
     # JWT
     SECRET_KEY: str = "merit-system-polri-secret-key-2026-CHANGE-IN-PRODUCTION"

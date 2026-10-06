@@ -1,14 +1,20 @@
 import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from app.config import settings
-from app.database import engine, Base
-import app.models  # noqa: F401
+from app.core.bootstrap import bootstrap
 from app.routers import auth, users, satker, personel, riwayat_jabatan, dashboard
 
-Base.metadata.create_all(bind=engine)
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # Auto setup: tunggu database -> buat tabel -> seed data awal (jika kosong)
+    bootstrap()
+    yield
+
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -41,6 +47,7 @@ Sistem pengelolaan data kualifikasi dan riwayat jabatan personel Polri.
     docs_url='/docs',
     redoc_url='/redoc',
     openapi_url='/openapi.json',
+    lifespan=lifespan,
 )
 
 app.add_middleware(

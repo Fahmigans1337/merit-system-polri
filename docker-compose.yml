@@ -1,55 +1,37 @@
-version: '3.8'
-
 services:
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: merit_polri_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: merituser
+      POSTGRES_PASSWORD: merit2026
       POSTGRES_DB: merit_polri
-    ports:
-      - '5432:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d merit_polri']
+      test: ["CMD-SHELL", "pg_isready -U merituser -d merit_polri"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 12
+    restart: unless-stopped
 
   api:
     build: .
     container_name: merit_polri_api
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/merit_polri
-      SECRET_KEY: merit-system-polri-secret-key-2026-CHANGE-IN-PRODUCTION
+      # Tabel dan data awal dibuat OTOMATIS saat container start (AUTO_SETUP)
+      DATABASE_URL: postgresql+psycopg2://merituser:merit2026@db:5432/merit_polri
+      SECRET_KEY: ${SECRET_KEY:-merit-system-polri-secret-key-2026-CHANGE-IN-PRODUCTION}
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 1440
       REFRESH_TOKEN_EXPIRE_DAYS: 7
-      DEBUG: 'False'
+      AUTO_SETUP: "true"
     ports:
-      - '8000:8000'
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - .:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      - "${APP_PORT:-8000}:8000"
     restart: unless-stopped
 
-  seed:
-    build: .
-    container_name: merit_polri_seed
-    environment:
-      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/merit_polri
-      SECRET_KEY: merit-system-polri-secret-key-2026-CHANGE-IN-PRODUCTION
-      ALGORITHM: HS256
-    depends_on:
-      db:
-        condition: service_healthy
-    command: python -X utf8 seed.py
-    restart: on-failure
-
 volumes:
-  postgres_data:
+  pgdata:

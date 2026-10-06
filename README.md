@@ -21,39 +21,56 @@ REST API dan Web UI untuk pengelolaan **kualifikasi dan riwayat jabatan personel
 
 ## Cara Menjalankan
 
-### Opsi 1: Linux / WSL Ubuntu (paling cepat)
+Database **dibuat dan diisi otomatis** saat aplikasi start: menunggu database siap, membuat tabel, lalu mengisi data awal bila masih kosong. Tidak ada langkah seed atau migrasi manual, dan aman dijalankan berulang kali (data tidak digandakan).
+
+### Opsi 1: Docker (paling mudah, memakai PostgreSQL)
 
 ```bash
 git clone https://github.com/Fahmigans1337/merit-system-polri.git
 cd merit-system-polri
+docker compose up --build
+```
+
+Tunggu sampai muncul `Application startup complete`, lalu buka **http://localhost:8000/**.
+
+- Percobaan pertama mengunduh image PostgreSQL dan Python sehingga bisa memakan waktu beberapa menit, tergantung koneksi internet.
+- Port bentrok? Jalankan dengan `APP_PORT=8080 docker compose up --build` (di PowerShell: `$env:APP_PORT=8080; docker compose up --build`).
+- Menghentikan: `docker compose down`. Untuk menghapus data juga: `docker compose down -v`.
+
+### Opsi 2: Tanpa Docker (langsung jalan, memakai SQLite)
+
+Butuh Python 3.11 atau lebih baru. Tidak perlu `.env` dan tidak perlu PostgreSQL.
+
+```bash
+git clone https://github.com/Fahmigans1337/merit-system-polri.git
+cd merit-system-polri
+python -m venv venv
+source venv/bin/activate            # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python -m uvicorn app.main:app --port 8000
+```
+
+Database `merit_polri.db` dibuat otomatis di folder proyek. Hapus file itu untuk mengulang dari data awal.
+
+### Opsi 3: Linux / WSL dengan PostgreSQL lokal
+
+```bash
 python3 -m venv venv && source venv/bin/activate
 bash run.sh
 ```
 
-`run.sh` mengerjakan semuanya otomatis: install dan start PostgreSQL, buat database, install dependency, isi data awal (seed), lalu menjalankan server.
+`run.sh` memasang dan menjalankan PostgreSQL, membuat database dan user, memasang dependency, lalu menjalankan server.
 
-Setelah muncul `Application startup complete`, buka **http://localhost:8000/**.
+### Memakai PostgreSQL sendiri
 
-### Opsi 2: Docker
-
-```bash
-docker compose up --build -d db api
-docker compose run --rm seed
-```
-
-Buka **http://localhost:8000/**.
-
-### Opsi 3: Manual dengan SQLite (tanpa PostgreSQL)
+Set `DATABASE_URL` (awalan wajib `postgresql+psycopg2://`), lalu jalankan uvicorn seperti biasa:
 
 ```bash
-python -m venv venv
-source venv/bin/activate            # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-export DATABASE_URL=sqlite:///./merit_polri.db   # Windows PowerShell: $env:DATABASE_URL="sqlite:///./merit_polri.db"
-export SECRET_KEY=ganti-dengan-kunci-rahasia
-python -X utf8 seed.py
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+export DATABASE_URL=postgresql+psycopg2://user:password@localhost:5432/merit_polri
+python -m uvicorn app.main:app --port 8000
 ```
+
+Database kosong harus sudah ada. Tabel dan data awal dibuat otomatis, dan aplikasi menunggu sampai database dapat dihubungi (maksimal sekitar 1 menit).
 
 ## Alamat Penting
 
